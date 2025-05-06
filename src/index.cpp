@@ -891,7 +891,7 @@ std::pair<uint32_t, uint32_t> Index<T, TagT, LabelT>::iterate_to_fixed_point(
             best_L_nodes.insert(nn);
         }
     }
-
+    
     uint32_t hops = 0;
     uint32_t cmps = 0;
 
@@ -917,7 +917,7 @@ std::pair<uint32_t, uint32_t> Index<T, TagT, LabelT>::iterate_to_fixed_point(
                 }
             }
         }
-
+        
         // Find which of the nodes in des have not been visited before
         id_scratch.clear();
         dist_scratch.clear();
@@ -963,7 +963,7 @@ std::pair<uint32_t, uint32_t> Index<T, TagT, LabelT>::iterate_to_fixed_point(
                 }
             }
         }
-
+        
         // Mark nodes visited
         for (auto id : id_scratch)
         {
@@ -980,7 +980,7 @@ std::pair<uint32_t, uint32_t> Index<T, TagT, LabelT>::iterate_to_fixed_point(
         assert(dist_scratch.capacity() >= id_scratch.size());
         compute_dists(id_scratch, dist_scratch);
         cmps += (uint32_t)id_scratch.size();
-
+        
         // Insert <id, dist> pairs into the pool of candidates
         for (size_t m = 0; m < id_scratch.size(); ++m)
         {
@@ -1982,6 +1982,7 @@ std::pair<uint32_t, uint32_t> Index<T, TagT, LabelT>::search(const T *query, con
 
     ScratchStoreManager<InMemQueryScratch<T>> manager(_query_scratch);
     auto scratch = manager.scratch_space();
+    //std::cout << "HERE!!! " << scratch << std::endl;
 
     if (L > scratch->get_L())
     {

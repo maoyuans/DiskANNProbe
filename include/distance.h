@@ -9,7 +9,8 @@ enum Metric
     L2 = 0,
     INNER_PRODUCT = 1,
     COSINE = 2,
-    FAST_L2 = 3
+    FAST_L2 = 3,
+    PENALTY_L2 = 4
 };
 
 template <typename T> class Distance
@@ -122,6 +123,19 @@ class DistanceL2Float : public Distance<float>
 #endif
 };
 
+// Uh this will not be easy...
+class DistanceL2PenaltyFloat : public Distance<float>
+{
+  public:
+    DistanceL2PenaltyFloat(const float *center) : Distance<float>(diskann::Metric::PENALTY_L2)
+    {
+        c = center;
+    }
+    const float *c;
+    DISKANN_DLLEXPORT virtual float compare(const float *a, const float *b, uint32_t size) const;
+};
+
+
 class AVXDistanceL2Float : public Distance<float>
 {
   public:
@@ -231,5 +245,6 @@ class AVXNormalizedCosineDistanceFloat : public Distance<float>
 };
 
 template <typename T> Distance<T> *get_distance_function(Metric m);
+template <typename T> Distance<T> *get_distance_function(Metric m, const float *center);
 
 } // namespace diskann

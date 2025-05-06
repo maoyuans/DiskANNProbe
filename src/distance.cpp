@@ -217,6 +217,32 @@ float DistanceL2Float::compare(const float *a, const float *b, uint32_t size) co
         result += (a[i] - b[i]) * (a[i] - b[i]);
     }
 #endif
+    //std::cout << " ";
+    return result;
+}
+
+float DistanceL2PenaltyFloat::compare(const float *a, const float *b, uint32_t size) const
+{
+    a = (const float *)__builtin_assume_aligned(a, 32);
+    b = (const float *)__builtin_assume_aligned(b, 32);
+
+    float result = 0;
+    for (int32_t i = 0; i < (int32_t)size; i++)
+    {
+        result += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+
+    float temp = 0;
+    for (int32_t i = 0; i < (int32_t)size; i++)
+    {
+        temp += (c[i] - b[i]) * (c[i] - b[i]);
+    }
+
+    if (temp >= 100000)
+    {
+        result += 100000000;
+    }
+
     return result;
 }
 
@@ -640,6 +666,23 @@ template <> diskann::Distance<float> *get_distance_function(diskann::Metric m)
         std::stringstream stream;
         stream << "Only L2, cosine, and inner product supported for floating "
                   "point vectors as of now."
+               << std::endl;
+        diskann::cerr << stream.str() << std::endl;
+        throw diskann::ANNException(stream.str(), -1, __FUNCSIG__, __FILE__, __LINE__);
+    }
+}
+
+// See if we can overload this...
+template <> diskann::Distance<float> *get_distance_function(diskann::Metric m, const float *center)
+{
+    if (m == diskann::Metric::PENALTY_L2)
+    {
+        return new diskann::DistanceL2PenaltyFloat(center);
+    }
+    else
+    {
+        std::stringstream stream;
+        stream << "Additional input for non penalty_l2."
                << std::endl;
         diskann::cerr << stream.str() << std::endl;
         throw diskann::ANNException(stream.str(), -1, __FUNCSIG__, __FILE__, __LINE__);

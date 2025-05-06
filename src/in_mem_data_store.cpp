@@ -224,8 +224,10 @@ void InMemDataStore<data_t>::get_distance(const data_t *preprocessed_query, cons
 {
     for (int i = 0; i < ids.size(); i++)
     {
+        //std::cout << "111" << std::endl;
         distances[i] =
             _distance_fn->compare(preprocessed_query, _data + ids[i] * _aligned_dim, (uint32_t)this->_aligned_dim);
+        //std::cout << "222" << std::endl;
     }
 }
 
